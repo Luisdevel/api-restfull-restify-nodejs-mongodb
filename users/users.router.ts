@@ -2,6 +2,7 @@ import * as restify from 'restify';
 
 import { Router } from '../common/routes';
 import { User } from '../users/users.model';
+import { NotFoundError } from 'restify-errors';
 
 class UserRouter extends Router {
   applyRouters(application: restify.Server) {
@@ -13,12 +14,15 @@ class UserRouter extends Router {
     });
 
     application.get('/users/:id', (req, resp, next) => {
-      User.findById(req.params.id).then(this.render(resp,next));
+      User.findById(req.params.id)
+        .then(this.render(resp,next))
+        .catch(next);
     });
 
     application.post('/users', (req, resp, next) => {
       let user = new User(req.body);
-      user.save().then(this.render(resp,next));
+      user.save().then(this.render(resp,next))
+      .catch(next);
     });
 
     application.put('/users/:id', (req, resp, next) => {
@@ -28,28 +32,29 @@ class UserRouter extends Router {
           if (result.n) {
             return User.findById(req.params.id);
           } else {
-            resp.send(404);
+            throw new NotFoundError('Document not found.');
           }
-        }).then(this.render(resp,next));
+        }).then(this.render(resp,next))
+          .catch(next);
     });
 
     application.patch('/users/:id', (req, resp, next) => {
       const options = { new: true };
       User.findByIdAndUpdate(req.params.id, req.body, options)
-        .then(this.render(resp,next));
+        .then(this.render(resp,next))
+        .catch(next);
     });
 
     application.del('/users/:id', (req, resp, next) => {
       User.remove({ _id: req.params.id }).exec().then((cmdResult: any) => {
         if (cmdResult.result.n) {
           resp.send(204)
-          return next();
         } else {
-          resp.send(404)
+          throw new NotFoundError('Document not found.');
         }
 
         return next();
-      });
+      }).catch(next);
     });
   }
 }
