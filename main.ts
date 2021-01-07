@@ -1,8 +1,12 @@
 import { Server } from './server/server'
 import { userRouter } from './users/users.router';
+import { restaurantsRouter } from './restaurants/restaurant.router';
 
 const server = new Server()
-server.bootstrap([ userRouter ]).then(server => {
+server.bootstrap([
+  userRouter,
+  restaurantsRouter
+]).then(server => {
   console.log('Server is listening on:', server.application.address());
 }).catch(error => {
   console.log('Server failed to start');
