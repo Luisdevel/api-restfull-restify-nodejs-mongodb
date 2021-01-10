@@ -29,8 +29,10 @@
     ]
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/restify": "^8.4.2",
     "bcrypt": "5.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "4.13.9",
     "nodemon": "^2.0.6",
     "restify": "^8.5.1",
