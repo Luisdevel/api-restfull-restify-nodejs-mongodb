@@ -12,7 +12,8 @@
   "license": "ISC",
   "jest": {
     "globals": {
-      "address": "http://localhost:3001"
+      "address": "http://localhost:3001",
+      "auth": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE1MTYyMzkwMjJ9.tBEEGy0mhY8te73dqRO8UN00brD40lFGp4M9w2i4xYw"
     },
     "testEnvironment": "node",
     "transform": {
@@ -35,6 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "4.13.9",
     "nodemon": "^2.0.6",
+    "pm2": "^4.5.1",
     "restify": "^8.5.1",
     "restify-errors": "8.0.2",
     "yargs": "^16.2.0"

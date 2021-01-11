@@ -1,11 +1,13 @@
 import * as restify from 'restify';
 import * as mongoose from 'mongoose';
+import * as fs from 'fs';
 
 import { environment } from '../common/environment';
 import { Router } from '../common/routes';
 import {mergePatchBodyParser} from './merge-patch.parser';
 import { handleError } from './error.handler';
 import { tokenParser } from '../security/token.parser';
+import { logger } from '../common/logger';
 
 export class Server {
   application: restify.Server;
@@ -20,11 +22,21 @@ export class Server {
   initRouter(routers: Router[]): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        //server
-        this.application = restify.createServer({
+        const options: restify.ServerOptions = {
           name: 'meat_api_teste',
-          version: '1.0.0'
-        });
+          version: '1.0.0',
+          log: logger
+        }
+        if (environment.security.enableHTTPS) {
+          options.certificate = fs.readFileSync(environment.security.certificate),
+          options.key = fs.readFileSync(environment.security.key)
+        }
+        //server
+        this.application = restify.createServer(options);
+
+        this.application.pre(restify.plugins.requestLogger({
+          log: logger
+        }));
 
         this.application.use(restify.plugins.queryParser());
         this.application.use(restify.plugins.bodyParser());
@@ -41,6 +53,11 @@ export class Server {
         });
 
         this.application.on('restifyError', handleError);
+        // Logger
+        /* this.application.on('after', restify.plugins.auditLogger({
+          log: logger,
+          event: 'after',
+        })); */
 
       } catch (error) {
         return reject(error);
